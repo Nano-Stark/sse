@@ -25,4 +25,10 @@ eventsource api use the MessageEvent interface, but only e.data, e.origin & e.la
 2. Scaling by storing client res object in either redis or whatnot (solution similar to scaling websocket)
 3. Browser reconnection (check the event.retry field to specify retry timoeout)
 4. Handle situation where client is not online (optional pull missed messages or proceed from that point on) - leverage the event.id/lastEventId field which is sent in the `Last-Event-Id` header on reconnection. Need to store this on client side.
-5. The Last-Event-Id is not when the browser is trying to connect when the server is done (this means its cleared from its buffer ot sommething like that on refresh) - I think os
+5. The Last-Event-Id is not when the browser is trying to connect when the server is done (this means its cleared from its buffer ot sommething like that on refresh) - I think so
+
+
+### Extension
+1. Support client subscribing to multiple events
+- in registerClient handler, store client res in a unsubscribed general list
+- create another separate http endpoint `/subscribe/<event>` or `subscribe/event=<a>,<b>` to subscribe to each of the events
