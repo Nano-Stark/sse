@@ -23,5 +23,5 @@ eventsource api use the MessageEvent interface, but only e.data, e.origin & e.la
 ### TODO
 1. Proper error handling
 2. Scaling by storing client res object in either redis or whatnot (solution similar to scaling websocket)
-3. Browser reconection (check the event.retry field)
-4. Handle situation where client is not online (optional pull missed messages or proceed from that point on) - leverage the event.id/lastEventId field
+3. Browser reconnection (check the event.retry field to specify retry timoeout)
+4. Handle situation where client is not online (optional pull missed messages or proceed from that point on) - leverage the event.id/lastEventId field which is sent in the `Last-Event-Id` header on reconnection. Need to store this on client side.
