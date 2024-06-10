@@ -1,4 +1,5 @@
 import express from "express"
+import eventsource from "eventsource"
 import cors from "cors"
 
 const app = express()
@@ -6,17 +7,11 @@ let clients = []
 
 app.use(express.json())
 app.use(cors({
-    origin: "http://127.0.0.1:5500",
+    origin: "http://127.0.0.1:5000",
     credentials: true
 }))
 
-// app.use("/", express.static("static"))
-
-app.get("/sse", registerClients)
-app.get('/status', (request, response) => response.json({ clients: clients.length }));
-// app.get("/msg", (req, res) => { return messageEvents()})
-// app.get("/notice", (req, res) => {sendNotice()})
-
+const events = new EventSource("http://127.0.0.1:5000/sse")
 
 function sendMsg() {
     const interval = setInterval(() => {
@@ -41,15 +36,15 @@ function sendNotice() {
 }
 sendNotice()
 
-app.listen(5000, () => {
-    console.info("[server]: server started on port 5000")
+app.listen(5001, () => {
+    console.info("[server2]: server started on port 5001")
 })
 
 
 function registerClients(req, res, next) {
     console.log("req: ", req)
     console.log("req headers: ", req.headers)
-    
+
     const headers = {
         'Content-Type': 'text/event-stream',
         'Connection': 'keep-alive',
@@ -67,7 +62,7 @@ function registerClients(req, res, next) {
   clients.push(newClient);
 
   req.on('close', () => {
-    console.log(`[server]: ${clientId} Connection closed`);
+    console.log(`[server2]: ${clientId} Connection closed`);
     clients = clients.filter(client => client.id !== clientId);
   });
 

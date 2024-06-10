@@ -6,13 +6,15 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node ./index.js"
+    "dev:1": "node ./server1.js",
+    "dev:2": "node ./server2.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
+    "eventsource": "^2.0.2",
     "express": "^4.19.2"
   }
 }
