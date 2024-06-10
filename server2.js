@@ -2,6 +2,7 @@ import express from "express"
 import eventsource from "eventsource"
 import cors from "cors"
 
+global.EventSource = eventsource;
 const app = express()
 let clients = []
 
@@ -13,10 +14,18 @@ app.use(cors({
 
 const events = new EventSource("http://127.0.0.1:5000/sse")
 
+events.onmessage = (e) => {
+    console.log("[SERVER_ONE -> SERVER_TWO]: ", e.data)
+}
+
+events.addEventListener("notice", (e) => {
+    console.log("[SERVER_ONE -> SERVER_TWO]:NOTICE ", e.data)
+})
+
 function sendMsg() {
     const interval = setInterval(() => {
         messageEvents()
-        console.log("first")
+        // console.log("first")
         sendMsg()
         clearInterval(interval)
     }, 2000)
@@ -24,17 +33,18 @@ function sendMsg() {
 
 sendMsg()
 
-
 function sendNotice() {
     const noticeInterval = setInterval(() => {
         noticeEvents()
-        console.log("second")
+        // console.log("second")
         sendNotice()
         clearInterval(noticeInterval)
-    }, 3000)
+    }, 4000)
 
 }
 sendNotice()
+
+app.get("/sse", registerClients)
 
 app.listen(5001, () => {
     console.info("[server2]: server started on port 5001")
@@ -42,7 +52,6 @@ app.listen(5001, () => {
 
 
 function registerClients(req, res, next) {
-    console.log("req: ", req)
     console.log("req headers: ", req.headers)
 
     const headers = {
@@ -70,8 +79,7 @@ function registerClients(req, res, next) {
 
 
 function messageEvents() {
-    const date = Date.now()
-    const msg = `id: Stark\ndata: M-${new Date(date).toUTCString()}\n\n`
+    const msg = `id: Stark\ndata: Message from [SERVER_TWO]\n\n`
 
     clients.forEach(({id, res}) => {
         res.write(msg)
@@ -79,8 +87,7 @@ function messageEvents() {
 }
 
 function noticeEvents() {
-    const date = Date.now()
-    const msg = `event: notice\ndata: N-${new Date(date).toUTCString()}\n\n`
+    const msg = `event: notice\ndata: NOTICE from [SERVER_TWO]\n\n`
 
     clients.forEach(({id, res}) => {
         res.write(msg)
